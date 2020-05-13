@@ -36,3 +36,12 @@ rabbit1_1  | 2019-12-19 06:47:57.804 [error] <0.310.0> Mnesia(rabbit@rabbit1): *
 
 120s が経過して loss がなくなると，inconsistent になる．
 
+## PerfTest
+
+`docker-compose up -d` で作成された network に対して PerfTest を実行する．
+
+```sh
+docker run -it --rm --network docker-rabbitmq-clustering_default \
+    pivotalrabbitmq/perf-test:latest \
+    --uris amqp://rabbit1,amqp://rabbit2,amqp://rabbit3
+```
