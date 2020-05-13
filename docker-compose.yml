@@ -3,6 +3,8 @@ version: '3'
 services:
   rabbit1: &base
     image: rabbitmq:3.8-management
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     environment:
       RABBITMQ_ERLANG_COOKIE: 'cookie value'
     hostname: rabbit1
@@ -17,6 +19,8 @@ services:
       - "5674:5672"
       - "15674:15672"
     volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      # NOTE: ↑ここにも指定しないと反映されない，仕様を勘違いしているかも？ (https://docs.docker.com/compose/extends/#adding-and-overriding-configuration)
       - ./join-cluster.sh:/usr/local/bin/join-cluster.sh
     depends_on:
       - rabbit1
