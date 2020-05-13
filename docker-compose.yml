@@ -1,17 +1,17 @@
 version: '3'
 
 services:
-  rabbit1:
+  rabbit1: &base
     image: rabbitmq:3.8-management
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'cookie value'
     hostname: rabbit1
     ports:
       - "5673:5672"
       - "15673:15672"
-    environment:
-      RABBITMQ_ERLANG_COOKIE: 'cookie value'
 
-  rabbit2:
-    image: rabbitmq:3.8-management
+  rabbit2: &join-node
+    <<: *base
     hostname: rabbit2
     ports:
       - "5674:5672"
@@ -23,21 +23,10 @@ services:
     entrypoint:
       - /usr/local/bin/join-cluster.sh
       - rabbit1
-    environment:
-      RABBITMQ_ERLANG_COOKIE: 'cookie value'
 
   rabbit3:
-    image: rabbitmq:3.8-management
+    <<: *join-node
     hostname: rabbit3
     ports:
       - "5675:5672"
       - "15675:15672"
-    volumes:
-      - ./join-cluster.sh:/usr/local/bin/join-cluster.sh
-    depends_on:
-      - rabbit1
-    entrypoint:
-      - /usr/local/bin/join-cluster.sh
-      - rabbit1
-    environment:
-      RABBITMQ_ERLANG_COOKIE: 'cookie value'
